@@ -1,4 +1,5 @@
 import random
+import typing
 
 import pygame
 
@@ -8,9 +9,20 @@ PARTICLE_COUNT = 100
 
 class Particle:
     def __init__(self, pos, radius, speed) -> None:
-        self.pos = pos
-        self.radius = radius
-        self.speed = speed
+        self.pos: typing.List[
+            int
+        ] = pos  # Use lists instead of tuples because lists are mutable(can be changed after being declared)
+        self.radius: int = radius
+        self.speed: int = speed
+
+    def move(self, dt):
+        # make the particle go left
+        self.pos[0] -= self.speed * dt
+        if self.pos[0] < -100:  # particle is out of screen
+            self.pos[0] = SCREEN_SIZE[0] + 100
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, "white", self.pos, self.radius)
 
 
 class App:
@@ -20,7 +32,7 @@ class App:
         self.is_running = False
         self.dt = 0
         self.events = []
-        self.particles = []
+        self.particles: typing.List[Particle] = []
 
     def run(self):
         self.is_running = True
@@ -30,17 +42,17 @@ class App:
             self.update()
             self.draw()
             pygame.display.update()
-            self.dt = self.clock.tick(60)
+            self.dt = self.clock.tick(60) / 18
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
             particle = Particle(
-                [
+                pos=[
                     random.randint(-100, SCREEN_SIZE[0] + 100),
                     random.randint(-100, SCREEN_SIZE[1] + 100),
                 ],
-                random.randint(3, 6),
-                random.randint(4, 8),
+                radius=random.randint(3, 6),
+                speed=random.randint(4, 8),
             )
             self.particles.append(particle)
 
@@ -52,15 +64,13 @@ class App:
 
     def update(self):
         for particle in self.particles:
-            particle.pos[0] -= particle.speed
-            if particle.pos[0] < -100:
-                particle.pos[0] = SCREEN_SIZE[0] + 100
+            particle.move(self.dt)
 
     def draw(self):
         self.screen.fill("black")
 
         for particle in self.particles:
-            pygame.draw.circle(self.screen, "white", particle.pos, particle.radius)
+            particle.draw(self.screen)
 
 
 if __name__ == "__main__":

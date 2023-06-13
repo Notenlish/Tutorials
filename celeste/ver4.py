@@ -1,5 +1,6 @@
 import math
 import random
+import typing
 
 import pygame
 
@@ -9,11 +10,31 @@ PARTICLE_COUNT = 100
 
 class Particle:
     def __init__(self, pos, radius, speed, time_offset, wave_speed) -> None:
-        self.pos = pos
-        self.radius = radius
-        self.speed = speed
-        self.time_offset = time_offset
-        self.wave_speed = wave_speed
+        self.pos: typing.List[
+            int
+        ] = pos  # Use lists instead of tuples because lists are mutable(can be changed after being declared)
+        self.radius: int = radius
+        self.speed: int = speed
+        self.time_offset: int = time_offset
+        self.wave_speed: float = wave_speed
+
+    def move(self, dt, time):
+        # make the particle go left
+        self.pos[0] -= self.speed * dt
+
+        if self.pos[0] < -100:  # particle is out of screen
+            self.pos[0] = SCREEN_SIZE[0] + 100
+
+            # if the particle is also too up or down
+            if self.pos[1] < -100 or self.pos[1] > SCREEN_SIZE[1] + 100:
+                self.pos[1] = random.randint(100, SCREEN_SIZE[1] - 100)
+
+        # Change the Y value
+        # NOTE: In pygame y coordinate is flipped so negative Y means up and positive Y means down
+        self.pos[1] += math.sin((time + self.time_offset)) * self.wave_speed * dt
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, "white", self.pos, self.radius)
 
 
 class App:
@@ -23,7 +44,7 @@ class App:
         self.is_running = False
         self.dt = 0
         self.events = []
-        self.particles = []
+        self.particles: typing.List[Particle] = []
         self.time = 0
         self.background = pygame.image.load("background.png").convert()
         self.background = pygame.transform.scale(self.background, SCREEN_SIZE)
@@ -37,8 +58,8 @@ class App:
             self.update()
             self.draw()
             pygame.display.update()
-            self.dt = self.clock.tick(60)
-            self.time += self.dt / 1000
+            self.dt = self.clock.tick(60) / 18
+            self.time += self.dt / 100
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
@@ -55,34 +76,21 @@ class App:
             self.particles.append(particle)
 
     def handling_events(self):
-        self.events = []
-        for event in pygame.event.get():
+        self.events = pygame.event.get()
+        for event in self.events:
             if event.type == pygame.QUIT:
                 raise SystemExit
 
     def update(self):
         for particle in self.particles:
-            # make the particle go left
-            particle.pos[0] -= particle.speed
-
-            if particle.pos[0] < -100:  # particle is out of screen
-                particle.pos[0] = SCREEN_SIZE[0] + 100
-
-                # if the particle is also too up or down
-                if particle.pos[1] < -100 or particle.pos[1] > SCREEN_SIZE[1] + 100:
-                    particle.pos[1] = random.randint(100, SCREEN_SIZE[1] - 100)
-
-            # change the y value
-            particle.pos[1] += (
-                math.sin((self.time + particle.time_offset)) * particle.wave_speed
-            )
+            particle.move(self.dt, self.time)
 
     def draw(self):
         self.screen.fill("black")
         self.screen.blit(self.background, (0, 0))
 
         for particle in self.particles:
-            pygame.draw.circle(self.screen, "white", particle.pos, particle.radius)
+            particle.draw(self.screen)
 
 
 if __name__ == "__main__":

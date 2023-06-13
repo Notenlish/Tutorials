@@ -1,4 +1,5 @@
 import random
+import typing
 
 import pygame
 
@@ -8,8 +9,10 @@ PARTICLE_COUNT = 100
 
 class Particle:
     def __init__(self, pos, radius) -> None:
-        self.pos = pos
-        self.radius = radius
+        self.pos: typing.List[
+            int
+        ] = pos  # Use lists instead of tuples because lists are mutable(can be changed after being declared)
+        self.radius: int = radius
 
 
 class App:
@@ -19,7 +22,7 @@ class App:
         self.is_running = False
         self.dt = 0
         self.events = []
-        self.particles = []
+        self.particles: typing.List[Particle] = []
 
     def run(self):
         self.is_running = True
@@ -29,13 +32,16 @@ class App:
             self.update()
             self.draw()
             pygame.display.update()
-            self.dt = self.clock.tick(60)
+            self.dt = self.clock.tick(60) / 18
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
             particle = Particle(
-                [random.randint(0, SCREEN_SIZE[0]), random.randint(0, SCREEN_SIZE[1])],
-                random.randint(3, 6),
+                pos=[
+                    random.randint(0, SCREEN_SIZE[0]),
+                    random.randint(0, SCREEN_SIZE[1]),
+                ],
+                radius=random.randint(3, 6),
             )
             self.particles.append(particle)
 
