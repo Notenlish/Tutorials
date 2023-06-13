@@ -1,5 +1,6 @@
-import pygame
 import random
+
+import pygame
 
 SCREEN_SIZE = (800, 600)
 PARTICLE_COUNT = 100
@@ -16,16 +17,19 @@ class App:
     def __init__(self) -> None:
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
         self.clock = pygame.Clock()
-        self.is_running = None
+        self.is_running = False
+        self.dt = 0
+        self.events = []
         self.particles = []
 
     def run(self):
         self.is_running = True
         self.add_particles()
         while self.is_running:
-            self.input()
+            self.handling_events()
             self.update()
             self.draw()
+            pygame.display.update()
             self.dt = self.clock.tick(60)
 
     def add_particles(self):
@@ -40,8 +44,9 @@ class App:
             )
             self.particles.append(particle)
 
-    def input(self):
-        for event in pygame.event.get():
+    def handling_events(self):
+        self.events = pygame.event.get()
+        for event in self.events:
             if event.type == pygame.QUIT:
                 raise SystemExit
 
@@ -56,8 +61,6 @@ class App:
 
         for particle in self.particles:
             pygame.draw.circle(self.screen, "white", particle.pos, particle.radius)
-
-        pygame.display.update()
 
 
 if __name__ == "__main__":
