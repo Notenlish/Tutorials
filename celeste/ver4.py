@@ -9,14 +9,20 @@ PARTICLE_COUNT = 100
 
 
 class Particle:
-    def __init__(self, pos, radius, speed, time_offset, wave_speed) -> None:
-        self.pos: typing.List[
-            int
-        ] = pos  # Use lists instead of tuples because lists are mutable(can be changed after being declared)
-        self.radius: int = radius
-        self.speed: int = speed
-        self.time_offset: int = time_offset
-        self.wave_speed: float = wave_speed
+    def __init__(
+        self,
+        pos: typing.List[int],
+        radius: int,
+        speed: int,
+        time_offset: int,
+        wave_speed: float,
+    ) -> None:
+        # Use lists instead of tuples because lists are mutable(can be changed after being declared)
+        self.pos = pos
+        self.radius = radius
+        self.speed = speed
+        self.time_offset = time_offset
+        self.wave_speed = wave_speed
 
     def move(self, dt, time):
         # make the particle go left
@@ -37,29 +43,13 @@ class Particle:
         pygame.draw.circle(screen, "white", self.pos, self.radius)
 
 
-class App:
+class ParticleManager:
     def __init__(self) -> None:
-        self.screen = pygame.display.set_mode(SCREEN_SIZE)
-        self.clock = pygame.Clock()
-        self.is_running = False
-        self.dt = 0
-        self.events = []
         self.particles: typing.List[Particle] = []
-        self.time = 0
-        self.background = pygame.image.load("background.png").convert()
-        self.background = pygame.transform.scale(self.background, SCREEN_SIZE)
 
-    def run(self):
-        self.is_running = True
-        self.add_particles()
-        while self.is_running:
-            pygame.display.set_caption(f"FPS: {self.clock.get_fps()}")
-            self.handling_events()
-            self.update()
-            self.draw()
-            pygame.display.update()
-            self.dt = self.clock.tick(60) / 18
-            self.time += self.dt / 100
+    def update(self, dt, time):
+        for particle in self.particles:
+            particle.move(dt, time)
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
@@ -75,6 +65,35 @@ class App:
             )
             self.particles.append(particle)
 
+    def draw(self, screen):
+        for particle in self.particles:
+            pygame.draw.circle(screen, "white", particle.pos, particle.radius)
+
+
+class App:
+    def __init__(self) -> None:
+        self.screen = pygame.display.set_mode(SCREEN_SIZE)
+        self.clock = pygame.Clock()
+        self.is_running = False
+        self.dt = 0
+        self.events = []
+        self.particle_manager = ParticleManager()
+        self.time = 0
+        self.background = pygame.image.load("background.png").convert()
+        self.background = pygame.transform.scale(self.background, SCREEN_SIZE)
+
+    def run(self):
+        self.is_running = True
+        self.particle_manager.add_particles()
+        while self.is_running:
+            pygame.display.set_caption(f"FPS: {self.clock.get_fps()}")
+            self.handling_events()
+            self.update()
+            self.draw()
+            pygame.display.update()
+            self.dt = self.clock.tick(60) / 18
+            self.time += self.dt / 100
+
     def handling_events(self):
         self.events = pygame.event.get()
         for event in self.events:
@@ -82,15 +101,12 @@ class App:
                 raise SystemExit
 
     def update(self):
-        for particle in self.particles:
-            particle.move(self.dt, self.time)
+        self.particle_manager.update(self.dt, self.time)
 
     def draw(self):
         self.screen.fill("black")
         self.screen.blit(self.background, (0, 0))
-
-        for particle in self.particles:
-            particle.draw(self.screen)
+        self.particle_manager.draw(self.screen)
 
 
 if __name__ == "__main__":
