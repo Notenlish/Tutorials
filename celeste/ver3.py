@@ -30,10 +30,14 @@ class App:
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
-            particle = Particle([random.randint(-100, SCREEN_SIZE[0] + 100),
-                                 random.randint(-100, SCREEN_SIZE[1] + 100)],
-                                 random.randint(3, 6),
-                                 random.randint(4, 8))
+            particle = Particle(
+                [
+                    random.randint(-100, SCREEN_SIZE[0] + 100),
+                    random.randint(-100, SCREEN_SIZE[1] + 100),
+                ],
+                random.randint(3, 6),
+                random.randint(4, 8),
+            )
             self.particles.append(particle)
 
     def input(self):
@@ -46,16 +50,16 @@ class App:
             particle.pos[0] -= particle.speed
             if particle.pos[0] < -100:
                 particle.pos[0] = SCREEN_SIZE[0] + 100
-    
+
     def draw(self):
         self.screen.fill("black")
 
         for particle in self.particles:
             pygame.draw.circle(self.screen, "white", particle.pos, particle.radius)
-        
+
         pygame.display.update()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = App()
     app.run()

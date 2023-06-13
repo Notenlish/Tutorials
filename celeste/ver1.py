@@ -3,7 +3,6 @@ import pygame
 SCREEN_SIZE = (800, 600)
 
 
-
 class App:
     def __init__(self) -> None:
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
@@ -25,12 +24,12 @@ class App:
 
     def update(self):
         pass
-    
+
     def draw(self):
         self.screen.fill("black")
         pygame.display.update()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = App()
     app.run()

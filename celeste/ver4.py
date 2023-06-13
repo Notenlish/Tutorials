@@ -38,14 +38,16 @@ class App:
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
-            particle = Particle(pos = [
-                                    random.randint(-100, SCREEN_SIZE[0] + 100),
-                                    random.randint(-100, SCREEN_SIZE[1] + 100)
-                                ],
-                                radius = random.randint(2, 4),
-                                speed = random.randint(6, 12),
-                                time_offset = random.randint(-4, 3),
-                                wave_speed = 1 + (random.randint(-15, 15) / 10))
+            particle = Particle(
+                pos=[
+                    random.randint(-100, SCREEN_SIZE[0] + 100),
+                    random.randint(-100, SCREEN_SIZE[1] + 100),
+                ],
+                radius=random.randint(2, 4),
+                speed=random.randint(6, 12),
+                time_offset=random.randint(-4, 3),
+                wave_speed=1 + (random.randint(-15, 15) / 10),
+            )
             self.particles.append(particle)
 
     def input(self):
@@ -61,23 +63,25 @@ class App:
             if particle.pos[0] < -100:  # particle is out of screen
                 particle.pos[0] = SCREEN_SIZE[0] + 100
 
-                # if the particle is also too up or down 
+                # if the particle is also too up or down
                 if particle.pos[1] < -100 or particle.pos[1] > SCREEN_SIZE[1] + 100:
                     particle.pos[1] = random.randint(100, SCREEN_SIZE[1] - 100)
-            
+
             # change the y value
-            particle.pos[1] += math.sin((self.time + particle.time_offset)) * particle.wave_speed
-    
+            particle.pos[1] += (
+                math.sin((self.time + particle.time_offset)) * particle.wave_speed
+            )
+
     def draw(self):
         self.screen.fill("black")
         self.screen.blit(self.background, (0, 0))
 
         for particle in self.particles:
             pygame.draw.circle(self.screen, "white", particle.pos, particle.radius)
-        
+
         pygame.display.update()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = App()
     app.run()
