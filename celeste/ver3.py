@@ -14,7 +14,7 @@ class Particle:
         self.radius = radius
         self.speed = speed
 
-    def move(self, dt):
+    def update(self, dt):
         # make the particle go left
         self.pos[0] -= self.speed * dt
         if self.pos[0] < -100:  # particle is out of screen
@@ -30,7 +30,7 @@ class ParticleManager:
 
     def update(self, dt):
         for particle in self.particles:
-            particle.move(dt)
+            particle.update(dt)
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
@@ -46,7 +46,7 @@ class ParticleManager:
 
     def draw(self, screen):
         for particle in self.particles:
-            pygame.draw.circle(screen, "white", particle.pos, particle.radius)
+            particle.draw(screen)
 
 
 class App:
@@ -62,17 +62,17 @@ class App:
         self.is_running = True
         self.particle_manager.add_particles()
         while self.is_running:
-            self.handling_events()
+            self.handle_events()
             self.update()
             self.draw()
             pygame.display.update()
             self.dt = self.clock.tick(60) / 18
 
-    def handling_events(self):
+    def handle_events(self):
         self.events = pygame.event.get()
         for event in self.events:
             if event.type == pygame.QUIT:
-                raise SystemExit
+                self.is_running = False
 
     def update(self):
         self.particle_manager.update(self.dt)

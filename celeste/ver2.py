@@ -50,17 +50,17 @@ class App:
         self.is_running = True
         self.particle_manager.add_particles()
         while self.is_running:
-            self.handling_events()
+            self.handle_events()
             self.update()
             self.draw()
             pygame.display.update()
             self.dt = self.clock.tick(60) / 18
 
-    def handling_events(self):
+    def handle_events(self):
         self.events = pygame.event.get()
         for event in self.events:
             if event.type == pygame.QUIT:
-                raise SystemExit
+                self.is_running = False
 
     def update(self):
         self.particle_manager.update()

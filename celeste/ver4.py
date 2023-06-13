@@ -24,7 +24,7 @@ class Particle:
         self.time_offset = time_offset
         self.wave_speed = wave_speed
 
-    def move(self, dt, time):
+    def update(self, dt, time):
         # make the particle go left
         self.pos[0] -= self.speed * dt
 
@@ -49,7 +49,7 @@ class ParticleManager:
 
     def update(self, dt, time):
         for particle in self.particles:
-            particle.move(dt, time)
+            particle.update(dt, time)
 
     def add_particles(self):
         for _ in range(PARTICLE_COUNT):
@@ -87,18 +87,18 @@ class App:
         self.particle_manager.add_particles()
         while self.is_running:
             pygame.display.set_caption(f"FPS: {self.clock.get_fps()}")
-            self.handling_events()
+            self.handle_events()
             self.update()
             self.draw()
             pygame.display.update()
             self.dt = self.clock.tick(60) / 18
             self.time += self.dt / 100
 
-    def handling_events(self):
+    def handle_events(self):
         self.events = pygame.event.get()
         for event in self.events:
             if event.type == pygame.QUIT:
-                raise SystemExit
+                self.is_running = False
 
     def update(self):
         self.particle_manager.update(self.dt, self.time)
