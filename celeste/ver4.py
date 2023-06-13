@@ -22,7 +22,7 @@ class App:
         self.is_running = None
         self.particles = []
         self.time = 0
-        self.background = pygame.image.load("tutorial/background.png").convert()
+        self.background = pygame.image.load("background.png").convert()
         self.background = pygame.transform.scale(self.background, SCREEN_SIZE)
 
     def run(self):
