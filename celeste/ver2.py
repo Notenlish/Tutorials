@@ -12,6 +12,9 @@ class Particle:
         # Use lists instead of tuples because lists are mutable(can be changed after being declared)
         self.pos = pos
         self.radius = radius
+    
+    def draw(self, screen):
+        pygame.draw.circle(screen, "white", self.pos, self.radius)
 
 
 class ParticleManager:
@@ -34,7 +37,7 @@ class ParticleManager:
 
     def draw(self, screen):
         for particle in self.particles:
-            pygame.draw.circle(screen, "white", particle.pos, particle.radius)
+            particle.draw(screen)
 
 
 class App:

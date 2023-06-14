@@ -35,7 +35,16 @@ To prevent this I'm going to add -100 or +100 to these calculations.
 use `black` for formatting
 use `isort` for import order formatting
 define stuff that will be added to the class in the class init too(yani self.dt'ı sadece loopda değil __init__'de de tanımla
-pygame.display.update()  main loopda olmalı draw metodunda olmamalı
+pygame.display.update()  should be in main loop it shouldnt be abstracted away in the draw func
 class parameter type hints
 keyword arguments when creating a class instance
 
+
+# I should mention in yt comments:
+cmd: 
+`(python(3) -m) pip uninstall pygame`
+`(python(3) -m) pip install pygame-ce`
+
+for _ in range():
+    _ is used when we dont care about the variable
+    for example in this case we dont care about the variable so we use _ instead of a variable name
